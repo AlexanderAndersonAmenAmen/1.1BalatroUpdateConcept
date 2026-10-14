@@ -1,0 +1,43 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 100
+
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = """
+        if self.ability.set == 'Joker' and G.GAME.blind and G.GAME.blind.name == 'Verdant Leaf' then 
+            G.E_MANAGER:add_event(Event({trigger = 'immediate',func = function()
+                G.GAME.blind:disable()
+                return true
+            end}))
+        end
+"""
+position = "at"
+payload = """
+        if self.ability.set == 'Joker' and G.GAME.blind and G.GAME.blind.name == 'Verdant Leaf' then 
+            G.E_MANAGER:add_event(Event({trigger = 'immediate',func = function()
+                if not (BUC11 and BUC11.disable_verdant_leaf_after_sale
+                    and BUC11.disable_verdant_leaf_after_sale(G.GAME.blind, self)) then
+                    G.GAME.blind:disable()
+                end
+                return true
+            end}))
+        end
+"""
+match_indent = false
+times = 1
+
+[[patches]]
+[patches.pattern]
+target = "blind.lua"
+pattern = """
+    if self.name == 'Verdant Leaf' and not self.disabled and card.area ~= G.jokers then card:set_debuff(true); return end
+"""
+position = "at"
+payload = """
+    if self.name == 'Verdant Leaf' and not self.disabled and card.area ~= G.jokers and not (BUC11 and BUC11.verdant_leaf_cleared and BUC11.verdant_leaf_cleared(self)) then card:set_debuff(true); return end
+"""
+match_indent = false
+times = 1

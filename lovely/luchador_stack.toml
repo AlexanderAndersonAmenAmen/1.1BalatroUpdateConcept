@@ -1,0 +1,92 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 110
+
+[[patches]]
+[patches.pattern]
+target = "blind.lua"
+pattern = '''
+    if self.name == 'Amber Acorn' and not reset and #G.jokers.cards > 0 then
+'''
+position = "at"
+payload = '''
+    if self.name == 'Amber Acorn' and not reset and #G.jokers.cards > 0 and not (BUC11 and BUC11.blue_base_disabled(self)) then
+'''
+match_indent = false
+times = 1
+
+[[patches]]
+[patches.pattern]
+target = "blind.lua"
+pattern = '''
+    if self.name == 'Crimson Heart' then 
+'''
+position = "at"
+payload = '''
+    if self.name == 'Crimson Heart' and not (BUC11 and BUC11.blue_base_disabled(self)) then 
+'''
+match_indent = false
+times = 1
+
+[[patches]]
+[patches.pattern]
+target = "blind.lua"
+pattern = '''
+        if self.name == 'Cerulean Bell' then
+'''
+position = "at"
+payload = '''
+        if self.name == 'Cerulean Bell' and not (BUC11 and BUC11.blue_base_disabled(self)) then
+'''
+match_indent = false
+times = 1
+
+[[patches]]
+[patches.pattern]
+target = "blind.lua"
+pattern = '''
+        if self.name == 'Crimson Heart' and self.prepped and G.jokers.cards[1] then
+'''
+position = "at"
+payload = '''
+        if self.name == 'Crimson Heart' and self.prepped and G.jokers.cards[1] and not (BUC11 and BUC11.blue_base_disabled(self)) then
+'''
+match_indent = false
+times = 1
+
+[[patches]]
+[patches.pattern]
+target = "blind.lua"
+pattern = '''
+    if self.name == 'Crimson Heart' and not self.disabled and card.area == G.jokers then 
+'''
+position = "at"
+payload = '''
+    if self.name == 'Crimson Heart' and not self.disabled and card.area == G.jokers and not (BUC11 and BUC11.blue_base_disabled(self)) then 
+'''
+match_indent = false
+times = 1
+
+[[patches]]
+[patches.pattern]
+target = "card.lua"
+pattern = '''
+            if self.ability.name == 'Luchador' then
+                if G.GAME.blind and ((not G.GAME.blind.disabled) and (G.GAME.blind:get_type() == 'Boss')) then 
+                    card_eval_status_text(context.blueprint_card or self, 'extra', nil, nil, nil, {message = localize('ph_boss_disabled')})
+                    G.GAME.blind:disable()
+                end
+            end
+'''
+position = "at"
+payload = '''
+            if self.ability.name == 'Luchador' then
+                if G.GAME.blind and ((not G.GAME.blind.disabled) and (G.GAME.blind:get_type() == 'Boss')) then 
+                    card_eval_status_text(context.blueprint_card or self, 'extra', nil, nil, nil, {message = localize('ph_boss_disabled')})
+                    if not (BUC11 and BUC11.luchador_disable_one(G.GAME.blind)) then G.GAME.blind:disable() end
+                end
+            end
+'''
+match_indent = false
+times = 1

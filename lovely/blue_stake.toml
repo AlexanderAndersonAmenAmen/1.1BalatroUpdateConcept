@@ -1,0 +1,46 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 0
+
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = "local blind_amt = get_blind_amount(G.GAME.round_resets.blind_ante)*blind_choice.config.mult*G.GAME.starting_params.ante_scaling"
+position = "after"
+match_indent = true
+payload = '''
+if BUC11 and BUC11.blue_stack_preview_amount then
+    blind_amt = BUC11.blue_stack_preview_amount(blind_choice.config, blind_amt)
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = "local loc_name = localize{type = 'name_text', key = blind_choice.config.key, set = 'Blind'}"
+position = "after"
+match_indent = true
+payload = '''
+if BUC11 and BUC11.blue_stack_name then
+    loc_name = BUC11.blue_stack_name(blind_choice.config, loc_name)
+end
+'''
+
+[[patches]]
+[patches.pattern]
+target = "functions/UI_definitions.lua"
+pattern = '''
+  blind_choice.animation:define_draw_steps({
+    {shader = 'dissolve', shadow_height = 0.05},
+    {shader = 'dissolve'}
+  })
+'''
+position = "after"
+match_indent = true
+times = 1
+payload = '''
+if BUC11 and BUC11.attach_blue_stack_tooltip then
+    BUC11.attach_blue_stack_tooltip(blind_choice.animation, blind_choice.config)
+end
+'''

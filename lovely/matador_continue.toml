@@ -1,0 +1,15 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 10003
+
+[[patches]]
+[patches.regex]
+target = "game.lua"
+pattern = '''(?m)^(?<indent>[\t ]*)if (?<cond>[^\n]*(?:G|self)\.GAME\.chips[^\n]*(?:G|self)\.GAME\.blind\.chips[^\n]*G\.GAME\.current_round\.hands_left[^\n]*) then'''
+position = "at"
+line_prepend = "$indent"
+payload = '''
+if ($cond) and not (BUC11 and BUC11.matador_should_continue and BUC11.matador_should_continue()) then
+'''
+times = 1

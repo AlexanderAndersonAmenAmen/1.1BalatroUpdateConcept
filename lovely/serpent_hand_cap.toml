@@ -1,0 +1,13 @@
+[manifest]
+version = "1.0.0"
+dump_lua = true
+priority = 10000
+
+[[patches]]
+[patches.pattern]
+target = "functions/state_events.lua"
+pattern = "hand_space = math.min(#G.deck.cards, 3)"
+position = "at"
+payload = "hand_space = math.min(#G.deck.cards, 3, math.max(0, G.hand.config.card_limit - #G.hand.cards))"
+match_indent = true
+times = 1
